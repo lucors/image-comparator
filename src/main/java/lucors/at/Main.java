@@ -51,6 +51,7 @@ public class Main {
             }
         }
 
+        long count = 0;
         // Попиксельно сравниваем два изображения
         for (int y = 0; y < image1.getHeight(); y++) {
             for (int x = 0; x < image1.getWidth(); x++) {
@@ -64,24 +65,33 @@ public class Main {
                         || color1.getBlue() != color2.getBlue()) {
                     // Если пиксели различаются, отмечаем это красным цветом в результирующем изображении
                     result.setRGB(x, y, Color.RED.getRGB());
+                    count++;
                 } else {
-                    // Если пиксели совпадают, копируем цвет из первого изображения в результирующее изображение
                     result.setRGB(x, y, Color.BLACK.getRGB());
                 }
             }
         }
+        System.out.println("Pixels diffs count: " + count);
         return result;
     }
 
     public static void main(String[] args) throws IOException {
-        // Загружаем оба изображения
-        BufferedImage image1 = ImageIO.read(new File("image1.png"));
-        BufferedImage image2 = ImageIO.read(new File("image2.png"));
-
-        // Используем измененные по размеру изображения для сравнения
+        if (args.length < 2) {
+            System.out.println("Pass the parameters.\nExample: image1.png image2.png result.png");
+            return;
+        }
+        BufferedImage image1 = ImageIO.read(new File(args[0]));
+        BufferedImage image2 = ImageIO.read(new File(args[1]));
         BufferedImage result = compareImages(image1, image2);
 
+        String resultFilename = "result.png";
+        if (args.length > 2) {
+            resultFilename = args[2];
+        }
+        String extension = "png";
+        int i = resultFilename.lastIndexOf('.');
+        if (i > 0) extension = resultFilename.substring(i+1);
         // Сохраняем результирующее изображение
-        ImageIO.write(result, "png", new File("result.png"));
+        ImageIO.write(result, extension, new File(resultFilename));
     }
 }
